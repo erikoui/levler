@@ -37,3 +37,4 @@ The program associates POINT objects as the coordinates of the point where a lev
 ## TODO
 - 3d point input
 - use MTEXT values as heights instead of readings
+- Generate cross sections
