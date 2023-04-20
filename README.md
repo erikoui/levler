@@ -34,6 +34,11 @@ To make such a dxf file, use the acad.dwt template, insert your plot outline and
 ## How it works:
 The program associates POINT objects as the coordinates of the point where a level reading was taken, and uses the nearest MTEXT object as the reading value to calculate the height from the zero point.
 
+## Requirements
+GTK+ libraries (https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases)
+scipy
+matplotlib
+
 ## TODO
 - 3d point input
 - use MTEXT values as heights instead of readings
