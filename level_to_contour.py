@@ -48,7 +48,7 @@ plot such that the sections you want are in the x and y directions.
 """)
     parser.add_argument('input_file', type=str,help='input file name (required)')
     parser.add_argument('-z', '--zero', type=float, action='store', default=0,help='level reading at your zero point')
-    parser.add_argument('-o', '--output_file', type=str,help='output file name')
+    parser.add_argument('-o', '--output_file', type=str,help='output file name without extension')
     parser.add_argument('-s', '--show_3d', action='store_true', default=False,help='Show a 3d model of the interpolation')
     parser.add_argument('-c', '--export_csv', action='store_true', default=False,help='Export a csv as well')
     parser.add_argument('--csv_only', action='store_true', default=False,help='Export only the csv')
@@ -58,6 +58,7 @@ plot such that the sections you want are in the x and y directions.
     parser.add_argument('--no-sections',action='store_true', default=False, help='Do not add sections to the output file')
     parser.add_argument('--section_resolution', type=float, default=4,help='Distance between section lines (in meters). This will snap to the interpolation grid')
     parser.add_argument('-v', '--verbose', action='store_true', default=False,help='verbose')
+    parser.add_argument('-3','--export_stl',action='store_true', default=False, help='Export stl file of the mesh')
     args = parser.parse_args()
     print('\n\n')
     print('             ▄▄▌   ▄▄▄ .   ▌ ▐·  ▄▄▌   ▄▄▄ .  ▄▄▄    ')
@@ -103,7 +104,7 @@ plot such that the sections you want are in the x and y directions.
                 nearpoint=point
                 mind=euclidean_distance(point,label[0:2])
         if(args.pre_calculated_z):
-            combined.append([nearpoint[0],nearpoint[1],label[2]]-offset)
+            combined.append([nearpoint[0],nearpoint[1],label[2]-offset])
         else:
             combined.append([nearpoint[0],nearpoint[1],offset-label[2]])
     print_if_verbose('[i] Converted point list:')
@@ -300,9 +301,9 @@ plot such that the sections you want are in the x and y directions.
     # Save the DXF file
     output_filename=filename_no_ext+'_with_contours.dxf'
     if(args.output_file):
-        output_filename=args.output_file
+        output_filename=args.output_file+'.dxf'
     if(os.path.isfile(output_filename)):
-        response = input("[?] File already exists, do you want to overwrite? (y/n): ")
+        response = input("[?] DXF File already exists, do you want to overwrite? (y/n): ")
         if response != "y":
             print('[-] Not overwriting the file and exiting.')
             exit(0)
@@ -317,5 +318,18 @@ plot such that the sections you want are in the x and y directions.
         ax.scatter(x, y, z, c='r', marker='o')
         ax.plot_surface(X, Y, Z, cmap='viridis')
         cset = ax.contour(X, Y, Z, zdir='z', offset=-5, cmap='coolwarm',levels=contour_levels)
-        plt.axis('auto')# should be equal when they implement it
+        plt.axis('equal')
         plt.show()
+    
+    if (args.export_stl):
+        import surf2stl
+        
+        output_filename=filename_no_ext+'.stl'
+        if(args.output_file):
+            output_filename=args.output_file+'.stl'
+        if(os.path.isfile(output_filename)):
+            response = input("[?] STL File already exists, do you want to overwrite? (y/n): ")
+            if response != "y":
+                print('[-] Not overwriting the file and exiting.')
+                exit(0)
+        surf2stl.write(output_filename, X, Y, Z)

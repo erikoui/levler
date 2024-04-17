@@ -3,3 +3,7 @@
 *.dxf
 *.bak
 *.dwl2
+topo3dpoints.csv
+fadi
+fadi.stl
+__pycache__/*
